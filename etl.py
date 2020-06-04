@@ -5,8 +5,13 @@ import pandas as pd
 from sql_queries import *
 
 
-# Creates Song and Artist Records
 def process_song_file(cur, filepath):
+    """ Creates Song and Artist Records
+
+    Args:
+        cur {object}: database cursor
+        filepath {string}: filepath of the data file
+    """
     # open song file
     df = pd.read_json(filepath, lines = True)
 
@@ -18,8 +23,14 @@ def process_song_file(cur, filepath):
     artist_data = tuple(df[['artist_id', 'artist_name', 'artist_location', 'artist_latitude', 'artist_longitude']].values[0])
     cur.execute(artist_table_insert, artist_data)
 
-# Creates Time, User, and SongPlay records
+
 def process_log_file(cur, filepath):
+    """ Creates Time, User, and SongPlay records
+
+    Args:
+        cur {object}: database cursor
+        filepath {string}: filepath of the data file
+    """
     # open log file
     df = pd.read_json(filepath, lines = True)
 
@@ -59,8 +70,16 @@ def process_log_file(cur, filepath):
         songplay_data = (row.ts / 1000, row.userId, row.level, songid, artistid, row.sessionId, row.location, row.userAgent.strip('"'))
         cur.execute(songplay_table_insert, songplay_data)
 
-# Process files
+
 def process_data(cur, conn, filepath, func):
+    """ Process data files to create records.
+
+    Args:
+        cur {object}: database cursor
+        conn {object}: database connection
+        filepath {string}: path of the data directory
+        func {function}: method to process the respective data (ex. Song, Log).
+    """
     # get all files matching extension from directory
     all_files = []
     for root, dirs, files in os.walk(filepath):
